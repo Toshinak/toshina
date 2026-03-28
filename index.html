@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOSHINAK ARCHIVE</title>
+
+<link rel="icon" href="toshi.jpg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    background: black;
+    color: #ff3b3b;
+    overflow-x: hidden;
+    cursor: crosshair;
+}
+
+/* FONDO */
+#bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #020000, #100000, #2a0000, #450000, #120000);
+    background-size: 500% 500%;
+    animation: bgMove 12s ease infinite alternate;
+    z-index: -10;
+}
+@keyframes bgMove {
+    0% { background-position: left top; }
+    100% { background-position: right bottom; }
+}
+
+/* GRID */
+.grid {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background:
+        repeating-linear-gradient(transparent, transparent 40px, rgba(255,0,0,0.08) 41px),
+        repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,0,0,0.08) 41px);
+    z-index: -9;
+}
+
+/* SCANLINES */
+.scanlines {
+    pointer-events: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.18) 0px,
+        rgba(0,0,0,0.18) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    z-index: 9999;
+    animation: flicker 0.12s infinite;
+}
+@keyframes flicker {
+    0% { opacity: 0.9; }
+    100% { opacity: 1; }
+}
+
+/* PARTICULAS */
+.particles {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -8;
+}
+.particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: rgba(255,0,0,0.7);
+    border-radius: 50%;
+    box-shadow: 0 0 12px red;
+    animation: floatParticle linear infinite;
+}
+@keyframes floatParticle {
+    from {
+        transform: translateY(100vh) scale(1);
+        opacity: 0;
+    }
+    20% { opacity: 1; }
+    to {
+        transform: translateY(-10vh) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* INTRO */
+#introScreen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, #140000 0%, black 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 10000;
+    text-align: center;
+    padding: 20px;
+}
+
+.intro-box {
+    border: 3px solid red;
+    padding: 30px;
+    background: rgba(0,0,0,0.85);
+    box-shadow: 0 0 20px red, 0 0 60px rgba(255,0,0,0.3);
+    animation: pulseBox 2s infinite alternate;
+}
+
+@keyframes pulseBox {
+    from { box-shadow: 0 0 15px red; }
+    to { box-shadow: 0 0 30px red, 0 0 70px rgba(255,0,0,0.5); }
+}
+
+.intro-box h1 {
+    font-size: 20px;
+    color: #ff0000;
+    text-shadow: 0 0 10px red, 0 0 25px red;
+    margin-bottom: 20px;
+}
+
+.intro-box p {
+    font-size: 10px;
+    color: #ffb3b3;
+    line-height: 2;
+    margin-bottom: 20px;
+}
+
+.enter-btn {
+    font-family: 'Press Start 2P', cursive;
+    background: black;
+    color: #ff4a4a;
+    border: 2px solid red;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-size: 9px;
+}
+.enter-btn:hover {
+    background: red;
+    color: black;
+    box-shadow: 0 0 15px red;
+}
+
+/* CONTENIDO */
+.main-content {
+    display: none;
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.container {
+    max-width: 950px;
+    margin: 35px auto;
+    padding: 25px;
+    background: rgba(0,0,0,0.87);
+    border: 3px solid red;
+    box-shadow: 0 0 20px red, 0 0 70px rgba(255,0,0,0.25);
+}
+
+.glitch {
+    position: relative;
+    color: red;
+    text-shadow: 0 0 8px red, 0 0 18px red;
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+.glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+}
+.glitch::before {
+    color: #ff8080;
+    z-index: -1;
+    animation: glitch1 1.8s infinite;
+}
+.glitch::after {
+    color: #ff0000;
+    z-index: -2;
+    animation: glitch2 1.4s infinite;
+}
+@keyframes glitch1 {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 1px); }
+    40% { transform: translate(2px, -1px); }
+    60% { transform: translate(-1px, 2px); }
+    80% { transform: translate(1px, -2px); }
+    100% { transform: translate(0); }
+}
+@keyframes glitch2 {
+    0% { transform: translate(0); }
+    20% { transform: translate(2px, -1px); }
+    40% { transform: translate(-2px, 1px); }
+    60% { transform: translate(1px, 2px); }
+    80% { transform: translate(-1px, -2px); }
+    100% { transform: translate(0); }
+}
+
+.subtitle {
+    text-align: center;
+    color: #ffb3b3;
+    font-size: 9px;
+    margin-bottom: 25px;
+    line-height: 1.8;
+}
+
+.profile-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.profile-pic {
+    width: 170px;
+    height: 170px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid red;
+    box-shadow: 0 0 20px red;
+    animation: glowPic 2.5s infinite alternate;
+}
+@keyframes glowPic {
+    from { box-shadow: 0 0 12px red; }
+    to { box-shadow: 0 0 30px red, 0 0 50px rgba(255,0,0,0.35); }
+}
+
+.info {
+    flex: 1;
+    min-width: 250px;
+    font-size: 10px;
+    line-height: 2;
+}
+.info p {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,0,0,0.15);
+}
+
+/* NAV */
+.section-title {
+    text-align: center;
+    margin: 30px 0 15px;
+    color: red;
+    text-shadow: 0 0 8px red;
+    font-size: 14px;
+}
+
+.controls, .gallery-buttons, .video-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+button, input[type="range"] {
+    font-family: 'Press Start 2P', cursive;
+}
+
+button {
+    background: black;
+    color: #ff4a4a;
+    border: 2px solid red;
+    padding: 10px 12px;
+    font-size: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+button:hover {
+    background: red;
+    color: black;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px red;
+}
+
+.volume-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    font-size: 8px;
+}
+input[type="range"] {
+    width: 160px;
+    accent-color: red;
+}
+
+/* MEDIA */
+.media-box {
+    width: 100%;
+    min-height: 320px;
+    border: 2px solid red;
+    background: rgba(25,0,0,0.35);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin-top: 15px;
+    box-shadow: inset 0 0 25px rgba(255,0,0,0.15);
+    position: relative;
+}
+
+.media-box img, .media-box video {
+    max-width: 100%;
+    max-height: 520px;
+    display: none;
+    animation: fadeMedia 0.4s ease;
+}
+
+.media-box img.active, .media-box video.active {
+    display: block;
+}
+
+@keyframes fadeMedia {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.placeholder {
+    color: #ff9b9b;
+    font-size: 10px;
+    text-align: center;
+    padding: 20px;
+    line-height: 1.8;
+}
+
+.year-caption {
+    text-align: center;
+    font-size: 8px;
+    color: #ffb3b3;
+    margin-top: 10px;
+    min-height: 20px;
+}
+
+/* LORE */
+.lore-box {
+    border: 2px solid rgba(255,0,0,0.3);
+    padding: 18px;
+    background: rgba(20,0,0,0.35);
+    font-size: 9px;
+    line-height: 2;
+    color: #ffbdbd;
+}
+
+/* ALERT BOX */
+.alert-box {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 10px;
+    color: #fff;
+    text-shadow: 0 0 10px red;
+    min-height: 18px;
+}
+
+/* REDES */
+.social-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.social-icon {
+    text-decoration: none;
+    color: #ff3b3b;
+    font-size: 28px;
+    text-align: center;
+    padding: 18px;
+    border: 2px solid rgba(255,0,0,0.3);
+    background: rgba(30,0,0,0.35);
+    transition: 0.2s;
+}
+.social-icon:hover {
+    color: red;
+    text-shadow: 0 0 12px red;
+    box-shadow: 0 0 15px rgba(255,0,0,0.35);
+    transform: translateY(-3px);
+}
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 8px;
+    color: #ffb3b3;
+    line-height: 1.9;
+}
+.counter {
+    margin-top: 10px;
+    color: white;
+    text-shadow: 0 0 10px red;
+}
+
+@media (max-width: 768px) {
+    .container { margin: 18px 12px; padding: 18px; }
+    .glitch { font-size: 20px; }
+    .profile-pic { width: 135px; height: 135px; }
+    .social-grid { grid-template-columns: repeat(2, 1fr); }
+    .media-box { min-height: 240px; }
+    button { font-size: 7px; padding: 9px 10px; }
+}
+</style>
+</head>
+<body>
+
+<div id="bg"></div>
+<div class="particles" id="particles"></div>
+<div class="grid"></div>
+<div class="scanlines"></div>
+
+<!-- INTRO -->
+<div id="introScreen">
+    <div class="intro-box">
+        <h1>[ TOSHINAK ARCHIVE ]</h1>
+        <p>
+            ACCESSING LOST FILES...<br>
+            MEMORY DETECTED<br>
+            OLD INTERNET SIGNAL FOUND
+        </p>
+        <button class="enter-btn" onclick="enterSite()">CLICK TO ENTER</button>
+    </div>
+</div>
+
+<!-- AUDIOS -->
+<audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="clickSound">
+    <source src="click.mp3" type="audio/mpeg">
+</audio>
+
+<!-- CONTENIDO -->
+<div class="main-content" id="mainContent">
+    <div class="container">
+
+        <h1 class="glitch" data-text="TOSHINAK">TOSHINAK</h1>
+        <p class="subtitle">[ ARCHIVOS RECUPERADOS DEL PASADO ]<br>nostalgia / recuerdos / internet viejo / mis cosas ☠️</p>
+
+        <div class="profile-section">
+            <img src="perfil.jpg" class="profile-pic" alt="perfil">
+
+            <div class="info">
+                <p>👤 Nombre: Toshiro</p>
+                <p>🎂 Edad: 16</p>
+                <p>📅 Nacimiento: 2010</p>
+                <p>🌎 País: Perú</p>
+                <p>👾 Discord: toshinak / toshironak (2017)</p>
+                <p>🎮 Juegos: L4D2 / GMod / Minecraft / Roblox</p>
+                <p>💻 Intereses: nostalgia / HTML / internet viejo / edición</p>
+            </div>
+        </div>
+
+        <div class="section-title">🎵 CONTROLES</div>
+        <div class="controls">
+            <button onclick="toggleMusic()">▶️ / ⏸ Música</button>
+            <button onclick="stopMusic()">⏹ Parar</button>
+            <button onclick="toggleMute()">🔇 / 🔊 Mute</button>
+            <button onclick="randomGlow()">⚡ Efecto</button>
+            <button onclick="corruptFile()">☠️ Archivo corrupto</button>
+        </div>
+
+        <div class="volume-box">
+            <span>VOL</span>
+            <input type="range" id="volumeSlider" min="0" max="100" value="35">
+            <span id="songName">music.mp3</span>
+        </div>
+
+        <div class="alert-box" id="alertBox">SYSTEM READY...</div>
+
+        <div class="section-title">📸 RECUERDOS</div>
+        <div class="gallery-buttons">
+            <button onclick="showImage('2011', '2011 — inicio del archivo')">2011</button>
+            <button onclick="showImage('2012', '2012 — recuerdos tempranos')">2012</button>
+            <button onclick="showImage('2013', '2013 — nostalgia detectada')">2013</button>
+            <button onclick="showImage('2014', '2014 — internet viejo activado')">2014</button>
+            <button onclick="showImage('2015', '2015 — etapa cursed legendaria')">2015</button>
+            <button onclick="showImage('2016', '2016 — recuerdos recuperados')">2016</button>
+            <button onclick="showImage('2017', '2017 — fase YouTube / Roblox')">2017</button>
+            <button onclick="showImage('2018', '2018 — crecimiento del archivo')">2018</button>
+            <button onclick="showImage('2019', '2019 — internet ya potente')">2019</button>
+            <button onclick="showImage('2020', '2020 — gaming / server era')">2020</button>
+            <button onclick="showImage('2021', '2021 — recuerdos guardados')">2021</button>
+            <button onclick="showImage('2022', '2022 — archivo más moderno')">2022</button>
+        </div>
+
+        <div class="media-box" id="imageBox">
+            <div class="placeholder" id="imagePlaceholder">Selecciona un año para abrir un recuerdo...</div>
+
+            <img id="img-2011" src="2011.jpg">
+            <img id="img-2012" src="2012.jpg">
+            <img id="img-2013" src="2013.jpg">
+            <img id="img-2014" src="2014.jpg">
+            <img id="img-2015" src="2015.jpg">
+            <img id="img-2016" src="2016.jpg">
+            <img id="img-2017" src="2017.jpg">
+            <img id="img-2018" src="2018.jpg">
+            <img id="img-2019" src="2019.jpg">
+            <img id="img-2020" src="2020.jpg">
+            <img id="img-2021" src="2021.jpg">
+            <img id="img-2022" src="2022.jpg">
+        </div>
+        <div class="year-caption" id="imageCaption"></div>
+
+        <div class="section-title">🎥 CLIPS</div>
+        <div class="video-buttons">
+            <button onclick="showVideo('2014', 'Clip 2014 — archivo multimedia abierto')">2014</button>
+            <button onclick="showVideo('2015', 'Clip 2015 — cursed media encontrada')">2015</button>
+            <button onclick="showVideo('2016', 'Clip 2016 — memoria cargada')">2016</button>
+            <button onclick="showVideo('2017', 'Clip 2017 — señal detectada')">2017</button>
+            <button onclick="showVideo('2018', 'Clip 2018 — datos reproducidos')">2018</button>
+            <button onclick="showVideo('2019', 'Clip 2019 — nostalgia en video')">2019</button>
+            <button onclick="showVideo('2020', 'Clip 2020 — etapa gaming / encierro')">2020</button>
+            <button onclick="showVideo('2021', 'Clip 2021 — archivo restaurado')">2021</button>
+            <button onclick="showVideo('2022', 'Clip 2022 — señal estable')">2022</button>
+        </div>
+
+        <div class="media-box" id="videoBox">
+            <div class="placeholder" id="videoPlaceholder">Selecciona un clip para reproducirlo...</div>
+
+            <video id="vid-2014" controls src="clip2014.mp4"></video>
+            <video id="vid-2015" controls src="clip2015.mp4"></video>
+            <video id="vid-2016" controls src="clip2016.mp4"></video>
+            <video id="vid-2017" controls src="clip2017.mp4"></video>
+            <video id="vid-2018" controls src="clip2018.mp4"></video>
+            <video id="vid-2019" controls src="clip2019.mp4"></video>
+            <video id="vid-2020" controls src="clip2020.mp4"></video>
+            <video id="vid-2021" controls src="clip2021.mp4"></video>
+            <video id="vid-2022" controls src="clip2022.mp4"></video>
+        </div>
+        <div class="year-caption" id="videoCaption"></div>
+
+        <div class="section-title">🧠MI LORE</div>
+        <div class="lore-box">
+            Desde pequeño me encantaba explorar internet,videos de YouTube, Minecraft, Roblox, intros, mods,músicas,etc los archivos extraños que tengo del pasado y momentos que se quedaron guardados en la memoria.<br><br>
+
+            Esta página es como un archivo digital personal:
+            una mezcla entre recuerdos reales, internet viejo, cosas cursed, clips del pasado y etapas que marcaron toda la vibra.
+        </div>
+
+        <div class="section-title">🌐 REDES</div>
+        <div class="social-grid">
+            <a href="https://youtube.com" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+            <a href="https://x.com" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
+            <a href="https://www.instagram.com/toshironakaval" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.roblox.com/es/users/314252969/profile" target="_blank" class="social-icon"><i class="fas fa-gamepad"></i></a>
+            <a href="https://es.namemc.com/profile/Toshiperu.1" target="_blank" class="social-icon"><i class="fas fa-cube"></i></a>
+            <a href="https://steamcommunity.com/id/ToshiTuber_XD/" target="_blank" class="social-icon"><i class="fab fa-steam"></i></a>
+        </div>
+
+        <div class="footer">
+            <p>⚠️ CLASSIFIED MEMORY FILE ⚠️</p>
+            <p>old internet / nostalgia / cursed archive / recovered memories</p>
+            <div class="counter">VISITAS: <span id="visitCounter">000001337</span></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const bgMusic = document.getElementById("bgMusic");
+const clickSound = document.getElementById("clickSound");
+const introScreen = document.getElementById("introScreen");
+const mainContent = document.getElementById("mainContent");
+const alertBox = document.getElementById("alertBox");
+const volumeSlider = document.getElementById("volumeSlider");
+
+let isMuted = false;
+
+/* ENTRAR */
+function enterSite() {
+    introScreen.style.display = "none";
+    mainContent.style.display = "block";
+    bgMusic.volume = volumeSlider.value / 100;
+    bgMusic.play().catch(() => {});
+    setAlert("ARCHIVE OPENED...");
+}
+
+/* CLICK SOUND */
+document.addEventListener("click", function(e) {
+    if (e.target.tagName === "BUTTON" || e.target.classList.contains("social-icon")) {
+        if (!isMuted) {
+            clickSound.currentTime = 0;
+            clickSound.volume = 0.3;
+            clickSound.play().catch(() => {});
+        }
+    }
+});
+
+/* ALERTAS */
+function setAlert(text) {
+    alertBox.textContent = text;
+}
+
+/* MUSICA */
+function toggleMusic() {
+    if (bgMusic.paused) {
+        bgMusic.play().catch(() => {});
+        setAlert("MUSIC PLAYING...");
+    } else {
+        bgMusic.pause();
+        setAlert("MUSIC PAUSED...");
+    }
+}
+
+function stopMusic() {
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+    setAlert("MUSIC STOPPED...");
+}
+
+function toggleMute() {
+    isMuted = !isMuted;
+    bgMusic.muted = isMuted;
+    clickSound.muted = isMuted;
+    setAlert(isMuted ? "AUDIO MUTED..." : "AUDIO RESTORED...");
+}
+
+volumeSlider.addEventListener("input", () => {
+    bgMusic.volume = volumeSlider.value / 100;
+});
+
+/* EFECTO */
+function randomGlow() {
+    document.body.style.filter = `brightness(${1 + Math.random() * 0.35}) contrast(${1 + Math.random() * 0.5})`;
+    setAlert("VISUAL DISTORTION DETECTED...");
+    setTimeout(() => {
+        document.body.style.filter = "none";
+    }, 500);
+}
+
+/* ARCHIVO CORRUPTO */
+function corruptFile() {
+    document.body.style.animation = "none";
+    document.body.style.filter = "invert(1) contrast(2)";
+    setAlert("ERROR 1998 // FILE CORRUPTED ☠️");
+    setTimeout(() => {
+        document.body.style.filter = "none";
+    }, 700);
+}
+
+/* IMAGENES */
+function showImage(year, caption) {
+    const images = document.querySelectorAll('#imageBox img');
+    images.forEach(img => img.classList.remove('active'));
+
+    document.getElementById('imagePlaceholder').style.display = 'none';
+    const selected = document.getElementById('img-' + year);
+    if (selected) selected.classList.add('active');
+
+    document.getElementById('imageCaption').textContent = caption;
+    setAlert("IMAGE FILE " + year + " OPENED...");
+}
+
+/* VIDEOS */
+function showVideo(year, caption) {
+    const videos = document.querySelectorAll('#videoBox video');
+    videos.forEach(video => {
+        video.pause();
+        video.currentTime = 0;
+        video.classList.remove('active');
+    });
+
+    document.getElementById('videoPlaceholder').style.display = 'none';
+    const selected = document.getElementById('vid-' + year);
+    if (selected) selected.classList.add('active');
+
+    document.getElementById('videoCaption').textContent = caption;
+    setAlert("VIDEO FILE " + year + " LOADED...");
+}
+
+/* PARTICULAS */
+const particlesContainer = document.getElementById("particles");
+for (let i = 0; i < 40; i++) {
+    const p = document.createElement("div");
+    p.classList.add("particle");
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.animationDuration = (5 + Math.random() * 10) + "s";
+    p.style.animationDelay = Math.random() * 8 + "s";
+    p.style.opacity = Math.random();
+    p.style.transform = `scale(${0.5 + Math.random()})`;
+    particlesContainer.appendChild(p);
+}
+
+/* CONTADOR FAKE */
+let count = 1337;
+setInterval(() => {
+    count += Math.floor(Math.random() * 3);
+    document.getElementById("visitCounter").textContent = String(count).padStart(9, "0");
+}, 3500);
+
+/* MENSAJES RANDOM */
+const messages = [
+    "SYSTEM READY...",
+    "OLD MEMORY DETECTED...",
+    "RECOVERED FILE FOUND...",
+    "SIGNAL FROM THE PAST...",
+    "VHS NOISE ACTIVE...",
+    "INTERNET 2010s ENERGY...",
+    "NOSTALGIA OVERLOAD..."
+];
+
+setInterval(() => {
+    if (Math.random() > 0.65) {
+        setAlert(messages[Math.floor(Math.random() * messages.length)]);
+    }
+}, 6000);
+</script>
+
+</body>
+</html>
